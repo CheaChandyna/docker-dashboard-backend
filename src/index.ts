@@ -1,17 +1,24 @@
-import fastify from 'fastify'
+import 'dotenv/config'
+import { buildApp } from './app';
+import { pool } from './database/db';
 
-const server = fastify()
+async function start() {
+  const app = buildApp()
 
-server.get('/ping', async (request, reply) => {
-  return 'pong\n'
-})
+  try {
+    await pool.query('SELECT 1')
+    console.log('Database connection is okey')
+  } catch (error) {
+    console.log(error, 'Fail to connect to database')
+  }
 
-server.listen({ port: 8080 }, (err, address) => {
-  if (err) {
-    console.error(err)
+  try {
+    const addresss = await app.listen({ port: Number(process.env.PORT) })
+    console.log(`Server listening at ${addresss}`)
+  } catch (error) {
+    console.log(error, 'Somthing went wrong...');
     process.exit(1)
   }
-  console.log(`Server listening at ${address}`)
-})
+}
 
-console.log('Hello, World!')
+start()
