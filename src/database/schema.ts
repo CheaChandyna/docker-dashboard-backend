@@ -2,7 +2,7 @@ import { integer, pgTable, timestamp, text } from "drizzle-orm/pg-core"
 
 export const users = pgTable("users", {
   id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-  username: text('username').notNull().unique(),
+  username: text('username').notNull(),
   email: text('email').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
   role: text('role', {enum: ['admin', 'user'] }).notNull().default('user'),

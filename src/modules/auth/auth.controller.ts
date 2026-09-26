@@ -1,15 +1,15 @@
 import type { FastifyPluginAsync } from "fastify";
 import { signInDto, signupDto } from './auth.dto';
-import { compareUser, createUser, findByUsername } from "./auth.service";
-import type { JwtPayload } from "../../types/payload";
+import { compareUser, createUser, findByEmail, findByUsername } from "./auth.service";
+import type { payload } from "../../types/payload";
 
 const authController: FastifyPluginAsync = async (app) => {
   app.post('/signup', async(request, response) =>{
     // vailidate body to Dto rules
     const {username, email, password} = signupDto.parse(request.body)
 
-    if (await findByUsername(username)) {
-      throw app.httpErrors.conflict('Username already exist.')
+    if (await findByEmail(email)) {
+      throw app.httpErrors.conflict('Email already exist.')
     }
 
     const user = await createUser(username, email, password)
@@ -24,7 +24,7 @@ const authController: FastifyPluginAsync = async (app) => {
       throw app.httpErrors.notFound('Invalid credentials.')
     }
 
-    const payload: JwtPayload = {
+    const payload: payload = {
       userId: user.id,
       user: user.username,
       role: user.role

@@ -1,9 +1,17 @@
 import { fastifyPlugin } from 'fastify-plugin';
-import type { FastifyRequest, FastifyReply } from 'fastify';
+import type { FastifyRequest, FastifyReply, FastifyPluginAsync } from 'fastify';
 import jwt from '@fastify/jwt';
 import 'dotenv/config'
+import type { payload } from '../types/payload';
 
-const authPlugin = fastifyPlugin(async (app) => {
+declare module '@fastify/jwt' {
+  interface FastifyJWT {
+    payload: payload
+    user: payload
+  }
+}
+
+const authPlugin: FastifyPluginAsync = async (app) => {
   await app.register(jwt, {
     secret: process.env.JWT_SECRET!,
   })
@@ -15,6 +23,6 @@ const authPlugin = fastifyPlugin(async (app) => {
       response.send(error)
     }
   })
-})
+}
 
-export default authPlugin
+export default fastifyPlugin(authPlugin)
