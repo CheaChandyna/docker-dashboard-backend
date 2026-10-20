@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt-ts';
-import { CreateUserDto } from "./user.dto";
+import { CreateUserDto, UpdatePasswordDto, UpdateUserDto } from "./user.dto";
 import { User } from "./user.entity";
 import db from '../../database/db';
 import { HttpException, HttpStatusCodes } from '../../middleware/httpException';
@@ -43,5 +43,21 @@ export const findOneByEmail = async (email: string) => {
       createAt: true,
       updateAt: true
     }
+  })
+}
+
+export const findOneById = async (id: number) => {
+  return await userRepository.findOne({ 
+    where: { id: id },
+    select: { 
+      id: true,
+      firstName: true,
+      lastName: true,
+      username: true,
+      email: true,
+      role: true,
+      createAt: true,
+      updateAt: true
+     }
   })
 }
