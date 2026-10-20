@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt-ts';
-import { CreateUserDto, UpdatePasswordDto, UpdateUserDto } from "./user.dto";
+import { CreateUserDto } from "./user.dto";
 import { User } from "./user.entity";
 import db from '../../database/db';
 import { HttpException, HttpStatusCodes } from '../../middleware/httpException';
@@ -26,8 +26,7 @@ export const createNewUser = async (userData: CreateUserDto) => {
   const newUser = userRepository.create(newUserData)
   const createdUser = await userRepository.save(newUser)
 
-  const { password, ...withoutPassowrd } = createdUser
-  return withoutPassowrd
+  return omitPassword(createdUser)
 }
 
 export const findOneByEmail = async (email: string) => {
@@ -60,4 +59,17 @@ export const findOneById = async (id: number) => {
       updateAt: true
      }
   })
+}
+
+const omitPassword = (user: User) => {
+  const { password, ...withoutPassword } = user
+  return withoutPassword
+}
+
+export const findOneAllFieldByEmail = async (email: string) => {
+  return await userRepository.findOne({ where: { email: email } })
+}
+
+export const findOneAllFieldById = async (id: number) => {
+  return await userRepository.findOne({ where: { id: id } })
 }
