@@ -1,7 +1,7 @@
 import db from "../../database/db";
 import { HttpException, HttpStatusCodes } from '../../middleware/httpException';
 import { User, UserRole } from '../user/user.entity';
-import { findOneByEmail, findOneById } from "../user/user.service";
+import { findOneAllFieldByEmail, findOneById } from "../user/user.service";
 import { SignInDto } from "./auth.dto";
 import * as bcrypt from 'bcrypt-ts';
 import jwt from 'jsonwebtoken';
@@ -17,7 +17,7 @@ export type PayLoad = {
 }
 
 export const signInUser = async (userData: SignInDto) => {
-  const user = await findOneByEmail(userData.email)
+  const user = await findOneAllFieldByEmail(userData.email)
   if(!user) {
     throw new HttpException(HttpStatusCodes.NOT_FOUND, 'Invalid credentials')
   }
